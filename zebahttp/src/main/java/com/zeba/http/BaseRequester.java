@@ -81,6 +81,10 @@ public abstract class BaseRequester {
         return this;
     }
 
+    public boolean isRepeat(){
+        return ZebaHttpClient.Instance().isRepeatRequest(this);
+    }
+
     public void request(){
         ZebaHttpClient.Instance().request(this);
     }

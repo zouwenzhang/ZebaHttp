@@ -103,9 +103,16 @@ public class ZebaHttpClient {
         return cookieStore;
     }
 
+    public boolean isRepeatRequest(BaseRequester requester){
+        if(requesterMap.get(requester.getRequestId())!=null){
+            return true;
+        }
+        return false;
+    }
+
     public Call builderRequest(BaseRequester requester){
         //防止重复请求
-        if(requesterMap.get(requester.getRequestId())!=null){
+        if(isRepeatRequest(requester)){
             return null;
         }
         //如果不是重复请求，则将本次请求加入请求队列，以防止重复请求
