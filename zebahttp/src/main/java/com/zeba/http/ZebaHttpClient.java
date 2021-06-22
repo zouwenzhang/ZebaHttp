@@ -1,5 +1,6 @@
 package com.zeba.http;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -97,6 +98,17 @@ public class ZebaHttpClient {
         if(builder!=null){
             mOkHttpClient=builder.build();
         }
+    }
+
+    public OkHttpClient getOkHttpClient(){
+        return mOkHttpClient;
+    }
+
+    /**
+     *加pem或cer格式的公钥证书
+     * */
+    public void loadHttpsCerts(Context context,String... assetsFileNames) throws Exception {
+        mOkHttpClient=HttpsUtil.loadCerts(mOkHttpClient,context,assetsFileNames);
     }
 
     public HashMap<String, List<Cookie>> getCookieStore(){
@@ -200,7 +212,7 @@ public class ZebaHttpClient {
     }
     public static final MediaType JSON= MediaType.parse("application/json; charset=utf-8");
     public RequestBody createPostJsonBody(BaseRequester requester){
-        RequestBody requestBody = RequestBody.create(JSON, getGson().toJson(requester.getOutParams()));
+        RequestBody requestBody = RequestBody.create(JSON, getGson().toJson(requester.getJsonParams()));
         return requestBody;
     }
 

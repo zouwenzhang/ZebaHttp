@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class BaseRequester {
     public static final int RequestType_PostFile=3;
@@ -17,6 +18,7 @@ public abstract class BaseRequester {
     private WeakReference<Object> requestTouch;
     private Map<String,Object> params=new HashMap<String,Object>();
     private Map<String,File> fileParams=null;
+    private Object jsonParams=null;
     private Object callBack;//回调方法
     private String result;//返回的数据
     private Object response;//反序列化后存放的对象
@@ -44,7 +46,34 @@ public abstract class BaseRequester {
     }
 
     public BaseRequester add(String key, Object value){
+        if(key!=null&&value!=null){
+            params.put(key,value);
+        }
+        return this;
+    }
+
+    public BaseRequester set(String key, Object value){
         params.put(key,value);
+        return this;
+    }
+
+    public BaseRequester add(Map<String,Object> map){
+        if(map!=null){
+            Set<Map.Entry<String,Object>> set= map.entrySet();
+            for(Map.Entry<String,Object> en:set){
+                add(en.getKey(),en.getValue());
+            }
+        }
+        return this;
+    }
+
+    public BaseRequester set(Map<String,Object> map){
+        if(map!=null){
+            Set<Map.Entry<String,Object>> set= map.entrySet();
+            for(Map.Entry<String,Object> en:set){
+                set(en.getKey(),en.getValue());
+            }
+        }
         return this;
     }
 
@@ -63,6 +92,13 @@ public abstract class BaseRequester {
 
     public BaseRequester postJson(){
         requestType=RequestType_PostJson;
+        jsonParams=params;
+        return this;
+    }
+
+    public BaseRequester postJson(Object obj){
+        requestType=RequestType_PostJson;
+        jsonParams=obj;
         return this;
     }
 
@@ -142,6 +178,7 @@ public abstract class BaseRequester {
     protected Map<String,File> getFileParams(){
         return fileParams;
     }
+    protected Object getJsonParams(){return jsonParams;}
 
     protected Object getCallBack(){return callBack; }
 
