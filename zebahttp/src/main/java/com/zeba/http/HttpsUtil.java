@@ -34,24 +34,16 @@ public class HttpsUtil {
     }
 
     public static OkHttpClient loadCerts(OkHttpClient client, Context context, String... assetsSSLFileNames)throws Exception{
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keyStore.load(null);
-        int index = 0;
+        HttpsTrustManager trustManager=new HttpsTrustManager();
         for(String name:assetsSSLFileNames){
             InputStream inputStream = getStream(context, name);
-            String certificateAlias = Integer.toString(index++);
-            keyStore.setCertificateEntry(certificateAlias, certificateFactory.generateCertificate(inputStream));
-            inputStream.close();
+            trustManager.loadCert(inputStream);
         }
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init(keyStore);
-
         SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
+        sslContext.init(null, new TrustManager[]{trustManager}, new SecureRandom());
 
         SSLSocketFactory sslSocketFactory =sslContext.getSocketFactory();
-        return client.newBuilder().sslSocketFactory(sslSocketFactory).build();
+        return client.newBuilder().sslSocketFactory(sslSocketFactory,trustManager).build();
     }
 
     public static OkHttpClient getSSLClientIgnoreExpire(OkHttpClient client, Context context, String assetsSSLFileName) {
@@ -67,7 +59,6 @@ public class HttpsUtil {
             Principal pubIssuerDN = ((X509Certificate) certificate).getIssuerDN();
             pubSub = pubSubjectDN.getName();
             pubIssuer = pubIssuerDN.getName();
-
             //Log.e("sssss", "--"+pubSubjectDN.getName());
             //Log.e("sssss", "--"+pubIssuerDN.getName());
 
@@ -110,6 +101,7 @@ public class HttpsUtil {
                             //getSubjectDN()  获取证书的 subject（主体的标识名）值。
                             //Log.e("sssss", "server--"+chain[0].getSubjectDN().getName());
                             //Log.e("sssss", "server--"+chain[0].getIssuerDN().getName());
+                            chain[0].getIssuerDN().getName();
                             if (!chain[0].getSubjectDN().getName().equals(pubSub)) {
                                 throw new CertificateException("server's SubjectDN is not equals to client's SubjectDN");
                             }

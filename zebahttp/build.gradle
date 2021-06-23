@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -23,9 +23,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api 'com.squareup.okhttp3:okhttp:3.2.0'
-    api 'com.squareup.okio:okio:1.7.0'
-    api 'com.google.code.gson:gson:2.8.2'
+    api 'com.squareup.okhttp3:okhttp:3.14.9'
+    api 'com.squareup.okio:okio:2.10.0'
+    api 'com.google.code.gson:gson:2.8.7'
 
 }
 
@@ -38,7 +38,7 @@ uploadArchives {
             pom.project {
                 groupId "org.zeba"
                 artifactId "android-http"
-                version "1.0.2"
+                version "1.0.7"
             }
         }
     }
